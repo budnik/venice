@@ -1,15 +1,13 @@
+require 'venice/dijkstra'
+
 module Venice
   class Lotsman
     Routes = Struct.new(:lotsman, :start, :finish)
 
     class Routes
       def shortest_distance
-        @min_path=("A".."E").to_a.product([Float::INFINITY]).to_h
-        @routes = []
-        @visited = []
-        @max_total_cost = Float::INFINITY
-        @canals = lotsman.canals.dup
-        dijkstra(start, finish)
+        d = Venice::Dijkstra.new(lotsman.canals)
+        d.solve(start, finish)
       end
 
       def max_distance(max_cost)
@@ -71,23 +69,6 @@ module Venice
 
       def canals
         lotsman.canals
-      end
-
-      def dijkstra(source, destination, cost=0)
-        @visited += [source]
-        @canals[source].each do |d,c|
-          if @min_path[d] > cost+c
-            @routes += [source+d, @min_path[d] = cost+c]
-          end
-        end
-        
-        @canals.each{|h| h.delete(source)}
-       
-        new_source,  = @min_path.each.reject{|k| @visited.include? k.first}.min_by &:last
-       
-        return @min_path[destination] if new_source == destination || new_source.nil?
-       
-        dijkstra(new_source, destination, @min_path[new_source])     
       end
     end
   end
