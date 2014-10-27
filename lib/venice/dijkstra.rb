@@ -2,7 +2,7 @@ module Venice
   class Dijkstra
     def initialize(canals)
       @canals = canals.dup
-      @min_path=("A".."E").to_a.product([Float::INFINITY]).to_h
+      @min_path = canals.keys.product([Float::INFINITY]).to_h
       @visited = []
     end
 
@@ -16,7 +16,7 @@ module Venice
       
       @canals.each{|h| h.delete(source)}
      
-      new_source, = @min_path.reject{|k| @visited.include? k.first}.min_by &:last
+      new_source, _ = @min_path.reject{|k| @visited.include?(k)}.min_by(&:last)
      
       if new_source == destination || new_source.nil?
         @min_path[destination]

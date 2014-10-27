@@ -1,5 +1,3 @@
-require 'venice/routes'
-
 module Venice
   class Lotsman
     attr_reader :canals
