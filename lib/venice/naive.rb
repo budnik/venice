@@ -1,19 +1,18 @@
 module Venice
   class Naive < Struct.new(:canals)
-    def solve(start, finish, stops: nil, max_stops: (stops||Float::INFINITY), max_cost: Float::INFINITY)
-      go = ->(destination, cost=0, route=destination) do
-        return [] if canals[destination].nil? || route.size > max_stops
+    def solve(start, finish, stops: nil, max_stops: stops, max_cost: Float::INFINITY)
+      max_stops ||= stops || Float::INFINITY
 
-        canals[destination].reject{|_, c| cost+c > max_cost}.flat_map do |next_trip, trip_cost|
-          routes = []
-          if next_trip != finish
-          elsif stops and stops != route.size
-          elsif cost > max_cost and max_cost < Float::INFINITY
-          else
-            routes << route + next_trip
-          end
-          routes += go[next_trip, cost+trip_cost, route+next_trip].compact
-        end
+      go = ->(dest, cost=0, route=dest) do
+        return [] if route.size > max_stops
+
+        routes_available = canals[dest].to_a.reject{|_, trip_cost| cost+trip_cost > max_cost}
+
+        routes_available.flat_map do |next_trip, trip_cost|
+          if next_trip == finish and not (stops and stops != route.size)
+            [route + next_trip]
+          end.to_a + go[next_trip, cost+trip_cost, route+next_trip]
+        end.compact
       end
 
       go[start]
