@@ -10,7 +10,7 @@ describe Venice::Lotsman do
       @lotsman.must_be_kind_of Venice::Lotsman
     end
 
-    it 'should canals should be empty' do
+    it 'canals should be empty' do
       @lotsman.canals.must_be_empty
     end
 
